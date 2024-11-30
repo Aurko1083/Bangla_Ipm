@@ -1,15 +1,28 @@
-import { useEffect } from "react";
+import { themeAtom } from "@/lib/store"
+import { useAtomValue } from "jotai"
+import { useEffect } from "react"
 
 export function ThemeLoader() {
-    useEffect(() => {
-        const root = window.document.documentElement;
+	const theme = useAtomValue(themeAtom)
 
-       
-        root.classList.remove("light");
-        
-        
-        root.classList.add("dark");
-    }, []);
+	useEffect(() => {
+		const root = window.document.documentElement
 
-    return null;
-}
+		root.classList.remove("light", "dark")
+
+		if (theme === "system") {
+			const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+				.matches
+				? "dark"
+				: "light"
+
+			root.classList.add(systemTheme)
+			return
+		}
+
+		root.classList.add(theme)
+	}, [theme])
+
+	return null
+} 
+
